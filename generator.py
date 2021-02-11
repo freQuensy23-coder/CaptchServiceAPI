@@ -8,15 +8,9 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("broadcast")
 
-txt = Image.open("im.png")
-fnt = ImageFont.truetype("20352.otf", 36)
-d = ImageDraw.Draw(txt)
-
-text = '123456 Алекс'
-d.text((100, 40), text, font=fnt, fill=(0, 0, 0, 255))
-del d
-txt.save("file.png", "PNG")
-img = open('file.png', 'rb')
+font_image = "background.jpg"
+text_font = "font.otf"
+text_size = 36
 
 
 def crop(image_name, size):
@@ -27,15 +21,20 @@ def crop(image_name, size):
     num_y = height // size_y
     for x in range(num_x):
         for y in range(num_y):
-            cropped = image.crop((x * size_x, y * size_y, (num_x - 2) * size_x, (num_y - 2) * size_y))
-            log.debug((x * size_x, y * size_y, (num_x - 2) * size_x, (num_y - 2) * size_y))
-            log.debug(image.size)
+            sizes_to_crop = (size_x * x, size_y * y, size_x * (x + 1), size_y * (y + 1))
+            log.debug(sizes_to_crop)
+            cropped = image.crop(sizes_to_crop)
             yield cropped
 
 
-get_cropped_font = crop("FONT.jpg", (100, 10))
-font = next(get_cropped_font)
+get_cropped_font = crop("background.jpg", (256, 128))
 
-d = ImageDraw.Draw(font)
-d.text((100, 40), text, font=fnt, fill=(0, 0, 0, 255))
-font.save("res.jpg")
+
+def generate_font_image():
+    font = next(get_cropped_font)
+    return font
+
+
+if __name__ == '__main__':
+    for i in range(3):
+        generate_font_image().show()
