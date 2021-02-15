@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("broadcast")
 
 font_image = "background.jpg"
-text_font = fnt = ImageFont.truetype("font.otf", 46)
+text_font = fnt = ImageFont.truetype("font.otf", 40)
 text_size = 36
 
 
@@ -59,6 +59,19 @@ def add_text(text, image):
     return image
 
 
+def do_image_dim(image, force = 128):
+    """Do image more dim"""
+    image_size = image.size
+    resulted_image = Image.new(mode="RGBA", size=image_size)
+    resulted_image.paste((force, 0, 0), box=(0, 0), mask=image)
+    return resulted_image
+
+
 if __name__ == '__main__':
     word = generate_random_word()
-    add_text(word, generate_font_image()).show()
+    while fnt.getsize(word)[0] >= size[0]:
+        log.debug(word)
+        word = generate_random_word()
+    log.info(word)
+    res = add_text(word, generate_font_image())
+    res.save("file.png", "PNG")
