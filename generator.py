@@ -48,7 +48,7 @@ def generate_font_image():
     return font
 
 
-def generate_random_word(length_limit: tuple = (2, 8)):
+def generate_random_word(length_limit: tuple = (3, 8)):
     """Generate random word form dictionary
     :param length_limit maximum length of word (min, max)
     """
@@ -58,7 +58,7 @@ def generate_random_word(length_limit: tuple = (2, 8)):
     words = response.content.splitlines()
     gen_word = str(random.choice(words)).replace("'", "")
 
-    while length_limit[1] < len(word) < length_limit[0]:
+    while length_limit[1] < len(gen_word) < length_limit[0]:
         gen_word = str(random.choice(words)).replace("'", "")
 
     return word[1:]
@@ -80,9 +80,6 @@ def do_image_dim(image, force=128):
 
 if __name__ == '__main__':
     word = generate_random_word()
-    while fnt.getsize(word)[0] >= size[0]:
-        log.debug(word)
-        word = generate_random_word()
     log.info(word)
     res = add_text(word, do_image_dim(generate_font_image()))
     res.save("file.png", "PNG")
