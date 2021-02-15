@@ -18,6 +18,7 @@ text_size = 36
 
 
 def crop(image_name, size):
+    """Crop image. Return generator, that will give u each rectangle of the picture"""
     image = Image.open(image_name)
     width, height = image.size
     size_x, size_y = size
@@ -36,7 +37,15 @@ get_cropped_font = crop("background.jpg", size)
 
 
 def generate_font_image():
-    font = next(get_cropped_font)
+    """Generating new font image. If we have already used all the background images, open again."""
+    global get_cropped_font
+    try:
+        font = next(get_cropped_font)
+    except StopIteration:
+        del get_cropped_font
+        get_cropped_font = crop("background.jpg", size)
+
+
     return font
 
 
@@ -59,7 +68,7 @@ def add_text(text, image):
     return image
 
 
-def do_image_dim(image, force = 128):
+def do_image_dim(image, force=128):
     """Do image more dim"""
     image_size = image.size
     resulted_image = Image.new(mode="RGBA", size=image_size)
