@@ -1,6 +1,6 @@
 import unittest
-from generator import generate_font_image
-
+from generator import generate_font_image, generate_random_word, do_image_dim
+from PIL import Image
 
 class Tester(unittest.TestCase):
     def setUp(self) -> None:
@@ -10,3 +10,11 @@ class Tester(unittest.TestCase):
         # TODO
         for i in range(3):
             generate_font_image().show()
+
+    def test_generate_random_word(self):
+        for i in range(50):
+            print(str(generate_random_word()))
+
+    def test_do_image_dim(self):
+        im = Image.open("background.jpg")
+        do_image_dim(im).show()
