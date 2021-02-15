@@ -17,4 +17,4 @@ class Tester(unittest.TestCase):
 
     def test_do_image_dim(self):
         im = Image.open("background.jpg")
-        do_image_dim(im).show()
+        do_image_dim(im, force=4096).show()
