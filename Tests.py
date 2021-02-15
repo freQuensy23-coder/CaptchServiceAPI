@@ -8,8 +8,8 @@ class Tester(unittest.TestCase):
 
     def test_get_font(self):
         # TODO
-        for i in range(3):
-            generate_font_image().show()
+        for i in range(5555):
+            generate_font_image()
 
     def test_generate_random_word(self):
         for i in range(50):
