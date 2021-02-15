@@ -1,7 +1,7 @@
 from PIL import *
 from PIL import Image
 from PIL import ImageFont
-from PIL import ImageDraw
+from PIL import ImageDraw, ImageEnhance
 import tqdm
 import logging
 
@@ -44,36 +44,38 @@ def generate_font_image():
     except StopIteration:
         del get_cropped_font
         get_cropped_font = crop("background.jpg", size)
-
-
+        font = next(get_cropped_font)
     return font
 
 
-def add_text_to_image():
-    pass
-
-
-def generate_random_word():
+def generate_random_word(length_limit: tuple = (2, 8)):
+    """Generate random word form dictionary
+    :param length_limit maximum length of word (min, max)
+    """
     response = requests.get("http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain",
-                            headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.7.42.7011 Safari/537.36"})
-    WORDS = response.content.splitlines()
-    word = str(random.choice(WORDS)).replace("'", "")
+                            headers={
+                                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.7.42.7011 Safari/537.36"})
+    words = response.content.splitlines()
+    gen_word = str(random.choice(words)).replace("'", "")
+
+    while length_limit[1] < len(word) < length_limit[0]:
+        gen_word = str(random.choice(words)).replace("'", "")
+
     return word[1:]
 
 
-def add_text(text, image):
+def add_text(text, image, text_colour=(205, 0, 0)):
     fontimage = Image.new('L', size)
     ImageDraw.Draw(fontimage).text((0, 0), text, fill=255, font=text_font)
-    image.paste((255, 0, 0), box=(0, 0), mask=fontimage)
+    image.paste(text_colour, box=(0, 0), mask=fontimage)
     return image
 
 
 def do_image_dim(image, force=128):
     """Do image more dim"""
-    image_size = image.size
-    resulted_image = Image.new(mode="RGBA", size=image_size)
-    resulted_image.paste((force, 0, 0), box=(0, 0), mask=image)
-    return resulted_image
+    dimmer = ImageEnhance.Brightness(image)
+    dimmed_im = dimmer.enhance(force)
+    return dimmed_im
 
 
 if __name__ == '__main__':
@@ -82,5 +84,5 @@ if __name__ == '__main__':
         log.debug(word)
         word = generate_random_word()
     log.info(word)
-    res = add_text(word, generate_font_image())
+    res = add_text(word, do_image_dim(generate_font_image()))
     res.save("file.png", "PNG")
