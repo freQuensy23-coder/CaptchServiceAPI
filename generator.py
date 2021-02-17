@@ -2,6 +2,7 @@ from PIL import *
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw, ImageEnhance
+from PIL import ImageFilter
 import tqdm
 import logging
 
@@ -12,7 +13,7 @@ import requests
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("broadcast")
 
-font_image = "background.jpg"
+font_image_name = "background.jpg"
 text_font = fnt = ImageFont.truetype("font.otf", 40)
 text_size = 36
 
@@ -48,7 +49,7 @@ def generate_font_image():
     return font
 
 
-def generate_random_word(length_limit: tuple = (3, 8)):
+def generate_random_word(length_limit: tuple = (3, 5)):
     """Generate random word form dictionary
     :param length_limit maximum length of word (min, max)
     """
@@ -61,7 +62,7 @@ def generate_random_word(length_limit: tuple = (3, 8)):
     while length_limit[1] < len(gen_word) < length_limit[0]:
         gen_word = str(random.choice(words)).replace("'", "")
 
-    return word[1:]
+    return gen_word[1:]
 
 
 def add_text(text, image, text_colour=(205, 0, 0)):
@@ -78,8 +79,13 @@ def do_image_dim(image, force=128):
     return dimmed_im
 
 
+def add_image_filter(image, f, filter):
+    return image.filter(filter)
+
+
 if __name__ == '__main__':
     word = generate_random_word()
     log.info(word)
-    res = add_text(word, do_image_dim(generate_font_image()))
+    font_image = do_image_dim(generate_font_image())
+    res = add_text(word, font_image)
     res.save("file.png", "PNG")
