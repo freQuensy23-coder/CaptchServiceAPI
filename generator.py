@@ -14,8 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("broadcast")
 
 font_image_name = "background.jpg"
-text_font = fnt = ImageFont.truetype("font.otf", 40)
-text_size = 36
+font_name = "font.otf"
 
 
 def crop(image_name, size):
@@ -65,11 +64,28 @@ def generate_random_word(length_limit: tuple = (3, 5)):
     return gen_word[1:]
 
 
-def add_text(text, image, text_colour=(205, 0, 0)):
+def add_text(text, image, text_font, text_colour=(205, 0, 0)):
     fontimage = Image.new('L', size)
-    ImageDraw.Draw(fontimage).text((0, 0), text, fill=255, font=text_font)
+
+    w, h = text_font.getsize(text=text)
+    W, H = size
+
+    ImageDraw.Draw(fontimage).text(((W-w)/2,(H-h)/2), text, fill=255, font=text_font)
     image.paste(text_colour, box=(0, 0), mask=fontimage)
     return image
+
+
+def generate_optimum_fontsize(word):
+    """Reduce font size untill word will be """
+    f_size = 40
+    fnt = ImageFont.truetype(font_name, f_size)
+    length = fnt.getsize(word)
+    while length[0] >= size[0] - 2:
+        log.debug(f"Font is too big, now len = {length}, f_size = {f_size}")
+        f_size -= 2
+        fnt = ImageFont.truetype(font_name, f_size)
+        length = fnt.getsize(word)
+    return fnt
 
 
 def do_image_dim(image, force=128):
@@ -86,6 +102,7 @@ def add_image_filter(image, f, filter):
 if __name__ == '__main__':
     word = generate_random_word()
     log.info(word)
+    fnt = generate_optimum_fontsize(word)
     font_image = do_image_dim(generate_font_image())
-    res = add_text(word, font_image)
+    res = add_text(word, font_image, text_font=fnt)
     res.save("file.png", "PNG")
