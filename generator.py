@@ -52,6 +52,7 @@ def generate_random_word(length_limit: tuple = (3, 5)):
     """Generate random word form dictionary
     :param length_limit maximum length of word (min, max)
     """
+    log.debug("Generating random word")
     response = requests.get("http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain",
                             headers={
                                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.7.42.7011 Safari/537.36"})
@@ -60,11 +61,11 @@ def generate_random_word(length_limit: tuple = (3, 5)):
 
     while length_limit[1] < len(gen_word) < length_limit[0]:
         gen_word = str(random.choice(words)).replace("'", "")
-
     return gen_word[1:]
 
 
 def add_text(text, image, text_font, text_colour=(205, 0, 0)):
+    log.debug(f"Adding text {text} to image with colour {text_colour}")
     fontimage = Image.new('L', size)
 
     w, h = text_font.getsize(text=text)
@@ -80,22 +81,25 @@ def generate_optimum_fontsize(word):
     f_size = 40
     fnt = ImageFont.truetype(font_name, f_size)
     length = fnt.getsize(word)
+    log.debug(f"Now len = {length}, f_size = {f_size}. Trying to get opt. font size.")
     while length[0] >= size[0] - 2:
-        log.debug(f"Font is too big, now len = {length}, f_size = {f_size}")
         f_size -= 2
         fnt = ImageFont.truetype(font_name, f_size)
         length = fnt.getsize(word)
+    log.debug(f"Now len = {length}, f_size = {f_size}")
     return fnt
 
 
 def do_image_dim(image, force=128):
     """Do image more dim"""
+    log.debug("Doing font more dim")
     dimmer = ImageEnhance.Brightness(image)
     dimmed_im = dimmer.enhance(force)
     return dimmed_im
 
 
 def add_image_filter(image, f, filter):
+    log.debug(f"Applying filter {filter} to image")
     return image.filter(filter)
 
 
@@ -106,3 +110,4 @@ if __name__ == '__main__':
     font_image = do_image_dim(generate_font_image())
     res = add_text(word, font_image, text_font=fnt)
     res.save("file.png", "PNG")
+    res.show()
