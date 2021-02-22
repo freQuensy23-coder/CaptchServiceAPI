@@ -103,6 +103,17 @@ def add_image_filter(image, f, filter):
     return image.filter(filter)
 
 
+def generate():
+    word = generate_random_word()
+    log.info(word)
+    fnt = generate_optimum_fontsize(word)
+    font_image = do_image_dim(generate_font_image())
+    res = add_text(word, font_image, text_font=fnt)
+    return res, word
+    # TODOD
+
+
+
 if __name__ == '__main__':
     word = generate_random_word()
     log.info(word)
