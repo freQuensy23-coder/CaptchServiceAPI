@@ -1,4 +1,13 @@
+import time
 import uuid
+import pymysql
+from pymysql.cursors import DictCursor
+import database_config as config
+import Access_levels
+
+import logging
+
+log = logging.getLogger("db")
 
 
 class API_Core:
@@ -13,15 +22,39 @@ class API_Core:
 class DataBase:
     def __init__(self):
         self.core = API_Core()
+        self.connection = pymysql.connect(
+            host=config.host,
+            user=config.name,
+            password=config.passwd,
+            db=config.name,
+            charset="utf8",
+            cursorclass=DictCursor
+        )
 
-    def add_key(self):
-        pass  # TODO
+        self.cursor = self.connection.cursor()
+        timeout = 2147482
+        self.cursor.execute(query=f"""SET SESSION wait_timeout := {timeout};""")
+        self.connection.commit()
+        log.debug("db inited")
+
+    def add_key(self, access=10, expires=Access_levels.key_live_time):
+        key = self.core.generate_key()
+        q = f"""INSERT INTO api_keys VALUES (access, api_key, expires) {access}, '{key}', {time.time() + expires}"""
+        cur = self.connection.cursor()
+        cur.execute(q)
 
     def __check_key_access(self, key: str) -> int:
-        pass  # TODO
+        """Get access level for key"""
+        q = f"""SELECT access FROM api_keys WHERE key={key}"""
+        cur = self.connection.cursor()
+        cur.execute(q)
+        return cur.fetchone()
 
     def do_some_action(self, key: str, action: str):
         pass  # TODO
 
     def get_all_keys(self) -> list:
-        pass  # TODO
+        q = f"""SELECT * FROM api_keys"""
+        cur = self.connection.cursor()
+        cur.execute(q)
+        return cur.fetchall()

@@ -8,3 +8,5 @@ get_user_data = 90
 # Limits
 req_per_day = 450
 req_per_minute = 10
+
+key_live_time = 365*24*60*60  # One year
