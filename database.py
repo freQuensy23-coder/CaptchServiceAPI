@@ -37,11 +37,13 @@ class DataBase:
         self.connection.commit()
         log.debug("db inited")
 
-    def add_key(self, access=10, expires=Access_levels.key_live_time):
+    def add_key(self, access=10, expires=Access_levels.key_live_time)->str:
         key = self.core.generate_key()
-        q = f"""INSERT INTO api_keys VALUES (access, api_key, expires) {access}, '{key}', {time.time() + expires}"""
+        q = f"""INSERT INTO api_keys (access, api_key, expires) VALUES ({access}, '{key}', {int(time.time()) + expires})"""
         cur = self.connection.cursor()
         cur.execute(q)
+        self.connection.commit()
+        return key
 
     def __check_key_access(self, key: str) -> int:
         """Get access level for key"""
