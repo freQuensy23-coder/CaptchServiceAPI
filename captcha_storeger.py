@@ -5,6 +5,7 @@ import os
 
 time_to_live = 25
 
+
 class Storeger:
     def __init__(self):
         self.data = []
@@ -18,15 +19,15 @@ class Storeger:
         self.clean_waste()  # TODO Optimize
         image, image_text = generator.generate()
         image_name = self.__generate_name()
-        image.save(image_name, "PNG")
+        image.save("pics/" + image_name, "PNG")
         return image_name, image_text
 
     def clean_waste(self):
         new_data = []
         for i, image_data in enumerate(self.data):
             if time.time() - image_data["time"]>= time_to_live:
-                # If we found long time ago gene    rated image - delete it and delete it's data
-                os.remove(image_data["name"])
+                # If we found long time ago generated image - delete it and delete it's data
+                os.remove("pics/" + image_data["name"])
             else:
-                new_data.append(image_data[i])
+                new_data.append(self.data[i])
         self.data = new_data

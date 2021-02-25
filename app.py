@@ -22,7 +22,7 @@ class GetCaptcha(Resource):
 
 class PictureShower(Resource):
     def get(self, name):
-        return send_file(name, mimetype='image/png')
+        return send_file("pics/" + name, mimetype='image/png')
 
 
 class CheckCaptcha(Resource):

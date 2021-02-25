@@ -113,7 +113,6 @@ def generate():
     # TODOD
 
 
-
 if __name__ == '__main__':
     word = generate_random_word()
     log.info(word)
