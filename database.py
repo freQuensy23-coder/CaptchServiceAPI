@@ -47,14 +47,14 @@ class DataBase:
 
     def __check_key_access(self, key: str) -> int:
         """Get access level for key"""
-        q = f"""SELECT access FROM api_keys WHERE key={key}"""
+        q = f"""SELECT access FROM api_keys WHERE api_key='{key}'"""
         cur = self.connection.cursor()
         cur.execute(q)
         return cur.fetchone()
 
     def do_some_action(self, key: str, action: str):
         pass  # TODO
-        acc = self.__check_key_access(key=key)
+        acc = self.__check_key_access(key=key)["access"]
 
         if acc >= eval(f"Access_levels.{action}"):
             if action == "get_captcha":
@@ -75,3 +75,6 @@ class DataBase:
         cur = self.connection.cursor()
         cur.execute(q)
         return cur.fetchall()
+
+    def del_user(self, key):
+        pass # TODO
