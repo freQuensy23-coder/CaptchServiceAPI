@@ -53,7 +53,7 @@ def generate_random_word(length_limit: tuple = (3, 5)):
     :param length_limit maximum length of word (min, max)
     """
     def is_word_correct(word):
-        blocked_symbols = ["'", "\\", ",", "/". "!"]
+        blocked_symbols = ["'", "\\", ",", "/", "!"]
         for blocked_symbol in blocked_symbols:
             if blocked_symbol in word:
                 return False
