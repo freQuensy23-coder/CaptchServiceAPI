@@ -54,6 +54,21 @@ class DataBase:
 
     def do_some_action(self, key: str, action: str):
         pass  # TODO
+        acc = self.__check_key_access(key=key)
+
+        if acc >= eval(f"Access_levels.{action}"):
+            if action == "get_captcha":
+                return True
+                # TODO Time limit
+            if action == "get_unlim_captcha":
+                return True
+            if action == "add_new_user":
+                key = self.add_key()
+                return key
+            if action == "del_user":
+                pass # TODO
+            if action == "get_user_data":
+                pass # TODO
 
     def get_all_keys(self) -> list:
         q = f"""SELECT * FROM api_keys"""
