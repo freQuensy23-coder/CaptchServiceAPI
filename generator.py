@@ -52,6 +52,13 @@ def generate_random_word(length_limit: tuple = (3, 5)):
     """Generate random word form dictionary
     :param length_limit maximum length of word (min, max)
     """
+    def is_word_correct(word):
+        blocked_symbols = ["'", "\\", ",", "/". "!"]
+        for blocked_symbol in blocked_symbols
+            if blocked_symbol in word:
+                return False
+            else:
+                return True
     log.debug("Generating random word")
     response = requests.get("http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain",
                             headers={
@@ -59,7 +66,7 @@ def generate_random_word(length_limit: tuple = (3, 5)):
     words = response.content.splitlines()
     gen_word = str(random.choice(words)).replace("'", "")
 
-    while length_limit[1] < len(gen_word) < length_limit[0]:
+    while (length_limit[1] < len(gen_word) < length_limit[0]) and (is_word_correct(word)):
         gen_word = str(random.choice(words)).replace("'", "")
     return gen_word[1:]
 
