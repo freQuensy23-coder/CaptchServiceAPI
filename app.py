@@ -43,6 +43,7 @@ class CheckCaptcha(Resource):
 
 
 if __name__ == '__main__':
+    # TODO Delete all pics when start
     db = DataBase()
     storager = Storeger()
     api.add_resource(GetCaptcha, "/generate")
